@@ -26,7 +26,7 @@
 #define SIG1(x) \
 (ROTRIGHT(x,17) ^ ROTRIGHT(x,19) ^ ((x) >> 10))
 
-static const unsigned int k[64] = 
+static const uint32_t k[64] = 
 {
 	0x428a2f98,
 	0x71374491,
@@ -94,9 +94,9 @@ static const unsigned int k[64] =
 	0xc67178f2
 };
 
-void sha256_transform(sha256_context_t * context, unsigned char const * data)
+void sha256_transform(sha256_context_t * context, uint8_t const * data)
 {
-	unsigned int a, b, c, d, e, f, g, h, i, j, t1, t2, m[64];
+	uint32_t a, b, c, d, e, f, g, h, i, j, t1, t2, m[64];
 	for (i = 0, j = 0; i < 16; ++i, j += 4)
 		*(m + i) = (*(data + j) << 24) | (*(data + j + 1) << 16) | (*(data + j + 2) << 8) | (*(data + j + 3));
 	for ( ; i < 64; ++i)
@@ -146,9 +146,9 @@ void sha256_init(sha256_context_t * context)
 	*(context->state + 7) = 0x5be0cd19;
 }
 
-void sha256_update(sha256_context_t * context, unsigned char const * data, size_t len)
+void sha256_update(sha256_context_t * context, uint8_t const * data, size_t len)
 {
-	unsigned int i;
+	uint32_t i;
 	for (i = 0; i < len; ++i) 
     {
 		*(context->data + context->datalen) = *(data + i);
@@ -162,9 +162,9 @@ void sha256_update(sha256_context_t * context, unsigned char const * data, size_
 	}
 }
 
-void sha256_final(sha256_context_t *context, unsigned char * hash)
+void sha256_final(sha256_context_t *context, uint8_t * hash)
 {
-	unsigned int i;
+	uint32_t i;
 	i = context->datalen;
 
 	// Pad whatever data is left in the buffer.

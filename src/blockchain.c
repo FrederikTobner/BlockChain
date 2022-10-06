@@ -23,7 +23,7 @@ int blockchain_init(block_chain_t * blockChain, uint32_t difficulty)
     blockChain->difficulty = difficulty;
     block_t genesisBlock;
     genesisBlock.previousHash = NULL;
-    genesisBlock.data = "It shall be light!";
+    genesisBlock.data = "Sic Mundus Creatus Est!";
     genesisBlock.blockIndex = 0;
     *blockChain->blocks = genesisBlock;
     return 0;
@@ -46,7 +46,8 @@ void blockchain_print_blocks(block_chain_t blockChain)
 {
     for (size_t i = 0; i < blockChain.usedBlocks; i++)
     {
-        printf("Index: %i\n", (blockChain.blocks + i)->blockIndex);
+        printf("====================================================================================================================================================================\n");
+        printf("BLOCK-%i\n", (blockChain.blocks + i)->blockIndex);
         printf("Data: %s\n", (blockChain.blocks + i)->data);
         printf("Own hash: 0x");
         for (size_t j = 0; j < SHA256_BLOCK_SIZE; j++)

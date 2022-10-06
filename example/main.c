@@ -6,7 +6,7 @@
 #include "sha256.h"
 
 int main(int argc, char const ** argv)
-{
+{    
     block_chain_t bc;
     blockchain_init(&bc, 5);
     block_t b1, b2, b3, b4;
