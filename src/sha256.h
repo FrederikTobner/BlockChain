@@ -1,6 +1,10 @@
 #ifndef SHA256_H
 #define SHA256_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 #include <stddef.h>
 
@@ -17,5 +21,9 @@ typedef struct
 void sha256_init(sha256_context_t * context);
 void sha256_update(sha256_context_t * context, uint8_t const * data, size_t len);
 void sha256_final(sha256_context_t * context, uint8_t * hash);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

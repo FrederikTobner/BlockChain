@@ -1,6 +1,10 @@
 #ifndef BLOCKCHAIN_H
 #define BLOCKCHAIN_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 #include <stddef.h>
 
@@ -21,5 +25,9 @@ int blockchain_add_block(block_chain_t * blockChain, block_t * newBlock);
 void blockchain_print_blocks(block_chain_t blockChain);
 
 void blockchain_free(block_chain_t blockChain);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
