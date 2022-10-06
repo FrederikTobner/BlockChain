@@ -18,13 +18,25 @@ typedef struct
     block_t * blocks;
 }block_chain_t;
 
-int blockchain_init(block_chain_t * blockChain, uint32_t difficulty);
-
+/// @brief Adds a new block to the blockchain
+/// @param blockChain The blockchain where a new block is added
+/// @param newBlock The block that is added
+/// @return 0 if sucessful
 int blockchain_add_block(block_chain_t * blockChain, block_t * newBlock);
 
-void blockchain_print_blocks(block_chain_t blockChain);
-
+/// @brief Frees the dynamic memory previously used in the the blockchain (blocks)
+/// @param blockChain The blockchain where the contents are freed
 void blockchain_free(block_chain_t blockChain);
+
+/// @brief Initializes a blockchain with the specified difficulty
+/// @param blockChain The blockchain that is initialized
+/// @param difficulty The difficulty that the blockchain uses
+/// @return 0 if sucessful
+int blockchain_init(block_chain_t * blockChain, uint32_t difficulty);
+
+/// @brief Prints the blocks that the blockchain contains
+/// @param blockChain The blockchain that is printed
+void blockchain_print_blocks(block_chain_t blockChain);
 
 #ifdef __cplusplus
 }

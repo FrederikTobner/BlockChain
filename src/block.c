@@ -17,19 +17,6 @@ void block_free(block_t block)
         free(block.ownHash);
 }
 
-void block_free_multiple(uint32_t n, ...)
-{
-    va_list ptr;
-    va_start(ptr, n);
-    block_t  block;
-    for (int i = 0; i < n; i++)
-    {
-        block = va_arg(ptr, block_t);
-        block_free(block);
-    }
-    return;
-}
-
 int block_init(block_t * block, char const * data)
 {
     size_t dataSize = strlen(data);
@@ -88,7 +75,7 @@ void block_mine(block_t * block, uint32_t difficulty)
 
 static char * block_calculate_hash(block_t * block)
 {
-    unsigned char * blockStringified = malloc(4096);
+    uint8_t * blockStringified = malloc(4096 * sizeof(uint8_t));
     if(!blockStringified)
         return "";
     if(block->previousHash)
@@ -97,7 +84,7 @@ static char * block_calculate_hash(block_t * block)
         sprintf(blockStringified, "%i%ju%i", block->blockIndex, block->blockTime, block->blockNonce, block->data);
     blockStringified = strcat(blockStringified, block->data);
     sha256_context_t ctx;
-    unsigned char * buf = malloc(SHA256_BLOCK_SIZE * sizeof(unsigned char));
+    uint8_t * buf = malloc(SHA256_BLOCK_SIZE * sizeof(uint8_t));
     if(!buf)
         return "";
     sha256_init(&ctx);

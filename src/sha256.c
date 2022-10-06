@@ -94,73 +94,7 @@ static const uint32_t k[64] =
 	0xc67178f2
 };
 
-void sha256_transform(sha256_context_t * context, uint8_t const * data)
-{
-	uint32_t a, b, c, d, e, f, g, h, i, j, t1, t2, m[64];
-	for (i = 0, j = 0; i < 16; ++i, j += 4)
-		*(m + i) = (*(data + j) << 24) | (*(data + j + 1) << 16) | (*(data + j + 2) << 8) | (*(data + j + 3));
-	for ( ; i < 64; ++i)
-		*(m + i) = SIG1(*(m + i - 2)) + *(m + i - 7) + SIG0(*(m + i - 15)) + *(m + i - 16);
-	a = *(context->state + 0);
-	b = *(context->state + 1);
-	c = *(context->state + 2);
-	d = *(context->state + 3);
-	e = *(context->state + 4);
-	f = *(context->state + 5);
-	g = *(context->state + 6);
-	h = *(context->state + 7);
-	for (i = 0; i < 64; ++i) 
-    {
-		t1 = h + EP1(e) + CH(e,f,g) + k[i] + m[i];
-		t2 = EP0(a) + MAJ(a,b,c);
-		h = g;
-		g = f;
-		f = e;
-		e = d + t1;
-		d = c;
-		c = b;
-		b = a;
-		a = t1 + t2;
-	}
-	*(context->state + 0) += a;
-	*(context->state + 1) += b;
-	*(context->state + 2) += c;
-	*(context->state + 3) += d;
-	*(context->state + 4) += e;
-	*(context->state + 5) += f;
-	*(context->state + 6) += g;
-	*(context->state + 7) += h;
-}
-
-void sha256_init(sha256_context_t * context)
-{
-	context->datalen = 0;
-	context->bitlen = 0;
-	*(context->state + 0) = 0x6a09e667;
-	*(context->state + 1) = 0xbb67ae85;
-	*(context->state + 2) = 0x3c6ef372;
-	*(context->state + 3) = 0xa54ff53a;
-	*(context->state + 4) = 0x510e527f;
-	*(context->state + 5) = 0x9b05688c;
-	*(context->state + 6) = 0x1f83d9ab;
-	*(context->state + 7) = 0x5be0cd19;
-}
-
-void sha256_update(sha256_context_t * context, uint8_t const * data, size_t len)
-{
-	uint32_t i;
-	for (i = 0; i < len; ++i) 
-    {
-		*(context->data + context->datalen) = *(data + i);
-		context->datalen++;
-		if (context->datalen == 64) 
-        {
-			sha256_transform(context, context->data);
-			context->bitlen += 512;
-			context->datalen = 0;
-		}
-	}
-}
+static void sha256_transform(sha256_context_t * context, uint8_t const * data);
 
 void sha256_final(sha256_context_t *context, uint8_t * hash)
 {
@@ -208,4 +142,72 @@ void sha256_final(sha256_context_t *context, uint8_t * hash)
 		*(hash + i + 24) = (*(context->state + 6) >> (24 - i * 8)) & 0x000000ff;
 		*(hash + i + 28) = (*(context->state + 7) >> (24 - i * 8)) & 0x000000ff;
 	}
+}
+
+void sha256_init(sha256_context_t * context)
+{
+	context->datalen = 0;
+	context->bitlen = 0;
+	*(context->state + 0) = 0x6a09e667;
+	*(context->state + 1) = 0xbb67ae85;
+	*(context->state + 2) = 0x3c6ef372;
+	*(context->state + 3) = 0xa54ff53a;
+	*(context->state + 4) = 0x510e527f;
+	*(context->state + 5) = 0x9b05688c;
+	*(context->state + 6) = 0x1f83d9ab;
+	*(context->state + 7) = 0x5be0cd19;
+}
+
+void sha256_update(sha256_context_t * context, uint8_t const * data, size_t len)
+{
+	uint32_t i;
+	for (i = 0; i < len; ++i) 
+    {
+		*(context->data + context->datalen) = *(data + i);
+		context->datalen++;
+		if (context->datalen == 64) 
+        {
+			sha256_transform(context, context->data);
+			context->bitlen += 512;
+			context->datalen = 0;
+		}
+	}
+}
+
+static void sha256_transform(sha256_context_t * context, uint8_t const * data)
+{
+	uint32_t a, b, c, d, e, f, g, h, i, j, t1, t2, m[64];
+	for (i = 0, j = 0; i < 16; ++i, j += 4)
+		*(m + i) = (*(data + j) << 24) | (*(data + j + 1) << 16) | (*(data + j + 2) << 8) | (*(data + j + 3));
+	for ( ; i < 64; ++i)
+		*(m + i) = SIG1(*(m + i - 2)) + *(m + i - 7) + SIG0(*(m + i - 15)) + *(m + i - 16);
+	a = *(context->state + 0);
+	b = *(context->state + 1);
+	c = *(context->state + 2);
+	d = *(context->state + 3);
+	e = *(context->state + 4);
+	f = *(context->state + 5);
+	g = *(context->state + 6);
+	h = *(context->state + 7);
+	for (i = 0; i < 64; ++i) 
+    {
+		t1 = h + EP1(e) + CH(e,f,g) + k[i] + m[i];
+		t2 = EP0(a) + MAJ(a,b,c);
+		h = g;
+		g = f;
+		f = e;
+		e = d + t1;
+		d = c;
+		c = b;
+		b = a;
+		a = t1 + t2;
+	}
+	*(context->state + 0) += a;
+	*(context->state + 1) += b;
+	*(context->state + 2) += c;
+	*(context->state + 3) += d;
+	*(context->state + 4) += e;
+	*(context->state + 5) += f;
+	*(context->state + 6) += g;
+	*(context->state + 7) += h;
 }
