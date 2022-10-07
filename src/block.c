@@ -84,10 +84,7 @@ static char * block_calculate_hash(block_t * block)
     uint8_t * blockStringified = malloc(4096 * sizeof(uint8_t));
     if(!blockStringified)
         return NULL;
-    // Max length for block content without data 
-    if(block->previousHash)
-        sprintf(blockStringified, "%i%ju%i", block->blockIndex, block->blockTime, block->blockNonce);
-    else
+    // Max length for block content without data is below 4096 (9+9+whatever time has :D )
         sprintf(blockStringified, "%i%ju%i", block->blockIndex, block->blockTime, block->blockNonce);
     if(strlen(blockStringified) + strlen(block->data) + SHA256_BLOCK_SIZE * 2 >= 4096)
         return NULL;  // Buffer is not big enough to store all the data that the block contains

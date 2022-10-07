@@ -39,9 +39,9 @@ int blockchain_add_block(block_chain_t * blockChain, block_t * newBlock)
             return -1;
     block_mine(newBlock, blockChain->difficulty);
     for (size_t i = 0; i < blockChain->difficulty / 2; i++)
-        assert(!newBlock->ownHash[i]);
+        assert(!*(newBlock->ownHash + i));
     if(blockChain->difficulty % 2)
-        assert(!(newBlock->ownHash[blockChain->difficulty / 2] & 0xf0));
+        assert(!(*(newBlock->ownHash + blockChain->difficulty / 2) & 0xf0));
     *(blockChain->blocks + blockChain->usedBlocks) = *newBlock;
     blockChain->usedBlocks++;
     assert(blockChain->allocatedBlocks >= blockChain->usedBlocks);
