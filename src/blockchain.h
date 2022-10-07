@@ -5,17 +5,17 @@
 extern "C" {
 #endif
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #include "block.h"
 
 typedef struct 
 {
-    uint32_t difficulty;
-    size_t allocatedBlocks;
-    size_t usedBlocks;
-    block_t * blocks;
+    uint32_t difficulty;        // The difficulty of the mining process (amount of leading 0h halfbytes -> 0000, in the ownhash)
+    size_t allocatedBlocks;     // The amount of allicated bytes of the dynamic "blocks" array
+    size_t usedBlocks;          // The amount of used bytes in the dynamic "blocks" array
+    block_t * blocks;           // The blocks that the blockchain contains (dynamic array)
 }block_chain_t;
 
 /// @brief Adds a new block to the blockchain

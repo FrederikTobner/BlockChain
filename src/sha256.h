@@ -5,9 +5,10 @@
 extern "C" {
 #endif
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
+// Number of bytes that are stored in a sha256 block
 #define SHA256_BLOCK_SIZE (32)                 
 
 typedef struct 

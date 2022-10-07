@@ -10,14 +10,14 @@ extern "C" {
 
 typedef struct
 {
-    uint32_t blockIndex;
-    uint32_t blockNonce;
-    size_t dataAllocatedSize;
-    size_t dataUsedSize;
-    uint8_t * data;
-    time_t blockTime;
-    uint8_t * ownHash;
-    uint8_t * previousHash;
+    uint32_t blockIndex;        // The index of the block in the chain
+    uint32_t blockNonce;        // The nonce of the block (is incremented after each miningattempt)
+    size_t dataAllocatedSize;   // The amount of allicated bytes of the dynamic data array
+    size_t dataUsedSize;        // The amount of used bytes in the dynamic data array
+    uint8_t * data;             // The data (e.g. a sequence of transactions) that is stored in the block
+    time_t blockTime;           // The time where the block was created (not mined!)
+    uint8_t * ownHash;          // The hashvalue of the current block
+    uint8_t * previousHash;     // The hashvalue of the prevoius block
 }block_t;
 
 /// @brief Frees the dynamic memory previously used in the the block (ownhash and data) 

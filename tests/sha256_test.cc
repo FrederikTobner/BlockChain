@@ -6,7 +6,7 @@
 
 TEST(SHA256, abc)
 {
-    uint8_t hash1[SHA256_BLOCK_SIZE] =  {
+    uint8_t expectedHash[SHA256_BLOCK_SIZE] =  {
                                             0xba,
                                             0x78,
                                             0x16,
@@ -47,12 +47,12 @@ TEST(SHA256, abc)
 	sha256_update(&ctx, text, strlen((char *)text));
 	sha256_final(&ctx, buf);
     for (size_t i = 0; i < SHA256_BLOCK_SIZE; i++)
-        ASSERT_EQ(*(buf + i), *(hash1 + i));
+        ASSERT_EQ(*(buf + i), *(expectedHash + i));
 }
 
 TEST(SHA256, enigma)
 {
-    uint8_t hash1[SHA256_BLOCK_SIZE] =  {
+    uint8_t expectedHash[SHA256_BLOCK_SIZE] =  {
                                             0x67,
                                             0xa4,
                                             0xf4,
@@ -93,5 +93,5 @@ TEST(SHA256, enigma)
 	sha256_update(&ctx, text, strlen((char *)text));
 	sha256_final(&ctx, buf);
     for (size_t i = 0; i < SHA256_BLOCK_SIZE; i++)
-        ASSERT_EQ(*(buf + i), *(hash1 + i));
+        ASSERT_EQ(*(buf + i), *(expectedHash + i));
 }

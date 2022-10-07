@@ -16,7 +16,7 @@ FetchContent_Declare(
   GIT_TAG release-1.12.1
 )
 
-set(SOURCES
+set(TEST_SOURCES
 sha256_test.cc
 )
 
@@ -25,11 +25,15 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(googletest)
 
-add_executable(${TEST_PROJ_NAME} ${SOURCES})
+add_executable(${TEST_PROJ_NAME} ${TEST_SOURCES})
 
+# Links text executable, googletest and the blockchain-libary
 target_link_libraries(${TEST_PROJ_NAME} GTest::gtest_main ${PROJECT_NAME})
 
+# For shorter includes
 target_include_directories(${TEST_PROJ_NAME} PUBLIC "${PROJECT_SOURCE_DIR}/src")
 
-include(GoogleTest)
+include(googletest)
+
+# discovers test cases automatically
 gtest_discover_tests(${TEST_PROJ_NAME})

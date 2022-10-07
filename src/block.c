@@ -12,9 +12,15 @@ static char * block_calculate_hash();
 void block_free(block_t block)
 {
     if(block.data)
+    {
         free(block.data);
+        block.data = NULL;
+    }
     if(block.ownHash)
+    {
         free(block.ownHash);
+        block.ownHash = NULL;
+    }
 }
 
 int block_init(block_t * block, char const * data)
@@ -22,7 +28,7 @@ int block_init(block_t * block, char const * data)
     size_t dataSize = strlen(data);
     block->data = malloc(dataSize + 1);
     if(!block->data)
-        return -1;
+        return -1; // Allocating the memory needed for the data failed 😨
     block->blockIndex = 0;
     block->blockTime = time(NULL);
     block->blockNonce = 0;
@@ -32,8 +38,8 @@ int block_init(block_t * block, char const * data)
     block->dataUsedSize = dataSize;
     block->previousHash = NULL;
     block->ownHash = block_calculate_hash(block);
-    if(*block->ownHash == '\0')
-        return -1;
+    if(!block->ownHash)
+        return -1; // Hashing the block failed 😨
     return 0;
 }
 
@@ -77,16 +83,26 @@ static char * block_calculate_hash(block_t * block)
 {
     uint8_t * blockStringified = malloc(4096 * sizeof(uint8_t));
     if(!blockStringified)
-        return "";
+        return NULL;
+    // Max length for block content without data 
     if(block->previousHash)
-        sprintf(blockStringified, "%i%s%ju%i", block->blockIndex, block->previousHash, block->blockTime, block->blockNonce, block->data);
+        sprintf(blockStringified, "%i%ju%i", block->blockIndex, block->blockTime, block->blockNonce);
     else
-        sprintf(blockStringified, "%i%ju%i", block->blockIndex, block->blockTime, block->blockNonce, block->data);
+        sprintf(blockStringified, "%i%ju%i", block->blockIndex, block->blockTime, block->blockNonce);
+    if(strlen(blockStringified) + strlen(block->data) + SHA256_BLOCK_SIZE * 2 >= 4096)
+        return NULL;  // Buffer is not big enough to store all the data that the block contains
+    if(block->previousHash)
+    {
+        char prevoiusHashStringified [SHA256_BLOCK_SIZE * 2];
+        for (size_t i = 0; i < SHA256_BLOCK_SIZE; i++)
+            sprintf(prevoiusHashStringified, "%s%02x", prevoiusHashStringified, *(block->previousHash + i));
+        blockStringified = strcat(blockStringified, prevoiusHashStringified);
+    }
     blockStringified = strcat(blockStringified, block->data);
     sha256_context_t ctx;
     uint8_t * buf = malloc(SHA256_BLOCK_SIZE * sizeof(uint8_t));
     if(!buf)
-        return "";
+        return NULL;
     sha256_init(&ctx);
 	sha256_update(&ctx, blockStringified, strlen(blockStringified));
 	sha256_final(&ctx, buf);

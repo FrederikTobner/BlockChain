@@ -20,10 +20,10 @@ int main(int argc, char const ** argv)
     if(!block_init(&b3, "Baz"))
         blockchain_add_block(&bc, &b3);
     
-    if(!block_init(&b4, "Quu"))
+    if(!block_init(&b4, "Qux"))
         blockchain_add_block(&bc, &b4);
 
     blockchain_print_blocks(bc);
-    blockchain_free(bc);    
+    blockchain_free(bc);
     return 0;
 }

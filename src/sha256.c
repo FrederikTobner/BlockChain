@@ -191,7 +191,7 @@ static void sha256_transform(sha256_context_t * context, uint8_t const * data)
 	h = *(context->state + 7);
 	for (i = 0; i < 64; ++i) 
     {
-		t1 = h + EP1(e) + CH(e,f,g) + k[i] + m[i];
+		t1 = h + EP1(e) + CH(e,f,g) + *(k + i) + *(m + i);
 		t2 = EP0(a) + MAJ(a,b,c);
 		h = g;
 		g = f;
