@@ -1,6 +1,6 @@
 #include "blockchain.h"
 
-#include <assert.h>
+
 #include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 static block_t blockchain_get_last_block();
 static int blockchain_grow_block();
 
-int blockchain_init(block_chain_t * blockChain, uint32_t difficulty)
+int blockchain_init(block_chain_t * blockChain, uint8_t difficulty)
 {
     blockChain->blocks = malloc(sizeof(block_t) * BLOCK_INIT_SIZE);
     if(!blockChain->blocks)
@@ -24,7 +24,13 @@ int blockchain_init(block_chain_t * blockChain, uint32_t difficulty)
     blockChain->difficulty = difficulty;
     block_t genesisBlock;
     genesisBlock.previousHash = NULL;
-    genesisBlock.data = "Sic Mundus Creatus Est!";
+    char * message = "Sic Mundus Creatus Est!";
+    size_t length = strlen(message);
+    genesisBlock.data = malloc(length + 1);
+    strcpy(genesisBlock.data, message);
+    genesisBlock.dataAllocatedSize = length + 1;
+    genesisBlock.dataAllocatedSize = length;
+    *(genesisBlock.data + length) = '\0';
     genesisBlock.blockIndex = 0;
     *blockChain->blocks = genesisBlock;
     return 0;
@@ -38,8 +44,11 @@ int blockchain_add_block(block_chain_t * blockChain, block_t * newBlock)
         if(blockchain_grow_block(blockChain))
             return -1;
     block_mine(newBlock, blockChain->difficulty);
-    for (size_t i = 0; i < blockChain->difficulty / 2; i++)
-        assert(!*(newBlock->ownHash + i));
+    
+    // Validate own hash
+    uint8_t * upperBound = newBlock->ownHash + blockChain->difficulty / 2;
+    for (uint8_t * ownHashPointer = newBlock->ownHash; ownHashPointer < upperBound; ownHashPointer++)
+        assert(!*ownHashPointer);
     if(blockChain->difficulty % 2)
         assert(!(*(newBlock->ownHash + blockChain->difficulty / 2) & 0xf0));
     *(blockChain->blocks + blockChain->usedBlocks) = *newBlock;
@@ -65,7 +74,7 @@ void blockchain_print_blocks(block_chain_t blockChain)
             printf("\n");
         }
         else
-            printf("Previous hash: NULL\n");
+            printf("Previous hash:\tNULL\n");
         printf("Own hash:\t0x");
         uint8_t * ownHashUpperBound = blockPointer->ownHash + SHA256_BLOCK_SIZE;
         for (uint8_t * ohp = blockPointer->ownHash; ohp < ownHashUpperBound; ohp++)
@@ -83,6 +92,8 @@ void blockchain_free(block_chain_t blockChain)
             block_free(*blockPointer);
         free(blockChain.blocks);
         blockChain.blocks = NULL;
+        blockChain.usedBlocks = 0;
+        blockChain.allocatedBlocks = 0;
     }
 }
 
@@ -94,12 +105,13 @@ static block_t blockchain_get_last_block(block_chain_t blockChain)
 static int blockchain_grow_block(block_chain_t * blockChain)
 {
     assert(blockChain->allocatedBlocks >= blockChain->usedBlocks);
-    block_t * newBlocks = malloc(sizeof(block_t) * blockChain->allocatedBlocks * BLOCK_GROWTH_FACTOR);
+    size_t newAllocatedCount = blockChain->allocatedBlocks != 0 ? blockChain->allocatedBlocks * BLOCK_GROWTH_FACTOR : BLOCK_INIT_SIZE;
+    block_t * newBlocks = malloc(sizeof(block_t) * newAllocatedCount);
     if(!newBlocks)
         return -1;
     memcpy(newBlocks, blockChain->blocks, blockChain->allocatedBlocks * sizeof(block_t));
     blockChain->blocks = newBlocks;
-    blockChain->allocatedBlocks *= BLOCK_GROWTH_FACTOR;
+    blockChain->allocatedBlocks  = newAllocatedCount;
     assert(blockChain->allocatedBlocks > blockChain->usedBlocks);
     return 0;
 }

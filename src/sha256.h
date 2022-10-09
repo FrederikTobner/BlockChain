@@ -5,8 +5,7 @@
 extern "C" {
 #endif
 
-#include <stddef.h>
-#include <stdint.h>
+#include "precompiled_header.h"
 
 // Number of bytes that are stored in a sha256 block
 #define SHA256_BLOCK_SIZE (32)                 

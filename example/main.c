@@ -8,7 +8,8 @@
 int main(int argc, char const ** argv)
 {    
     block_chain_t bc;
-    blockchain_init(&bc, 5);
+    if(blockchain_init(&bc, 4))
+        return -1;                  // Blockchain creation failed
     block_t b1, b2, b3, b4;
     
     if(!block_init(&b1, "Foo"))
