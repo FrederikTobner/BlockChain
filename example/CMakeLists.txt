@@ -1,9 +1,7 @@
-set(THIS Example)
+set(EXAMPLE_NAME ${PROJECT_NAME}Example)
 
-add_executable(${THIS} main.c)
+add_executable(${EXAMPLE_NAME} main.c)
 
-target_link_libraries(${THIS}
-${PROJECT_NAME}
-)
+target_link_libraries(${EXAMPLE_NAME} ${PROJECT_NAME})
 
-target_include_directories(${THIS} PUBLIC "${PROJECT_SOURCE_DIR}/src")
+target_include_directories(${EXAMPLE_NAME} PUBLIC "${PROJECT_SOURCE_DIR}/src")

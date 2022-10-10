@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+// Includes of the c-standard libary used in the project
+
 #include <assert.h>
 #include <memory.h>
 #include <stdbool.h>

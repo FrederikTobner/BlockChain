@@ -13,10 +13,11 @@ typedef struct
     uint32_t blockNonce;        // The nonce of the block (is incremented after each miningattempt)
     size_t dataAllocatedSize;   // The amount of allicated bytes of the dynamic data array
     size_t dataUsedSize;        // The amount of used bytes in the dynamic data array
-    uint8_t * data;             // The data (e.g. a sequence of transactions) that is stored in the block
+    char const * data;          // The data (e.g. a sequence of transactions) that is stored in the block
     time_t blockTime;           // The time where the block was mined
     uint8_t * ownHash;          // The hashvalue of the current block
     uint8_t * previousHash;     // The hashvalue of the prevoius block
+    uint8_t * merkleRoot;       // The merkle root that was calculated based on the data in the block
 } block_t;
 
 /// @brief Frees the dynamic memory previously used in the the block (ownhash and data) 
@@ -33,6 +34,11 @@ int block_init(block_t * block, char const * data);
 /// @param block The block that is mined
 /// @param difficulty The difficulty of the mining process
 void block_mine(block_t * block, uint32_t difficulty);
+
+
+/// @brief Prints the contents of a block on the console
+/// @param block The block that is printed
+void block_print(block_t block);
 
 #ifdef __cplusplus
 }

@@ -96,10 +96,7 @@ static void sha256_transform(sha256_context_t * context, uint8_t const * data);
 
 void sha256_final(sha256_context_t *context, uint8_t * hash)
 {
-	uint32_t i;
-	i = context->datalen;
-
-	// Pad whatever data is left in the buffer.
+	uint32_t i = context->datalen;
 	if (context->datalen < 56) 
     {
 		*(context->data + i++) = 0x80;
@@ -114,8 +111,6 @@ void sha256_final(sha256_context_t *context, uint8_t * hash)
 		sha256_transform(context, context->data);
 		memset(context->data, 0, 56);
 	}
-
-	// Append to the padding the total message's length in bits and transform.
 	context->bitlen += context->datalen * 8;
 	*(context->data + 63) = context->bitlen;
 	*(context->data + 62) = context->bitlen >> 8;
@@ -126,9 +121,6 @@ void sha256_final(sha256_context_t *context, uint8_t * hash)
 	*(context->data + 57) = context->bitlen >> 48;
 	*(context->data + 56) = context->bitlen >> 56;
 	sha256_transform(context, context->data);
-
-	// Since this implementation uses little endian byte ordering and SHA uses big endian,
-	// reverse all the bytes when copying the final state to the output hash.
 	for (i = 0; i < 4; ++i) 
     {
 		*(hash + i)      = (*(context->state + 0) >> (24 - i * 8)) & 0x000000ff;

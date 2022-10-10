@@ -1,17 +1,12 @@
 #include "blockchain.h"
 
-
-#include <memory.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "sha256.h"
 
 #define BLOCK_INIT_SIZE (2)
 
 #define BLOCK_GROWTH_FACTOR (2)
 
-static block_t blockchain_get_last_block();
+static inline block_t blockchain_get_last_block();
 static int blockchain_grow_block();
 
 int blockchain_init(block_chain_t * blockChain, uint8_t difficulty)
@@ -23,15 +18,7 @@ int blockchain_init(block_chain_t * blockChain, uint8_t difficulty)
     blockChain->usedBlocks = 1;
     blockChain->difficulty = difficulty;
     block_t genesisBlock;
-    genesisBlock.previousHash = NULL;
-    char * message = "Sic Mundus Creatus Est!";
-    size_t length = strlen(message);
-    genesisBlock.data = malloc(length + 1);
-    strcpy(genesisBlock.data, message);
-    genesisBlock.dataAllocatedSize = length + 1;
-    genesisBlock.dataAllocatedSize = length;
-    *(genesisBlock.data + length) = '\0';
-    genesisBlock.blockIndex = 0;
+    block_init(&genesisBlock, "Sic Mundus Creatus Est!");
     *blockChain->blocks = genesisBlock;
     return 0;
 }
@@ -62,24 +49,7 @@ void blockchain_print_blocks(block_chain_t blockChain)
     block_t * upperBlockBound = blockChain.blocks + blockChain.usedBlocks;
     for (block_t * blockPointer = blockChain.blocks; blockPointer < upperBlockBound; blockPointer++)
     {
-        printf("=========================================================================================================\n");
-        printf("BLOCK-%i\n", blockPointer->blockIndex);
-        printf("Data:\t\t%s\n", blockPointer->data);
-        if(blockPointer->previousHash)
-        {
-            printf("Previous hash:\t0x");
-            uint8_t * prevoiusHashUpperBound = blockPointer->previousHash + SHA256_BLOCK_SIZE;
-            for (uint8_t * php = blockPointer->previousHash; php < prevoiusHashUpperBound; php++)
-                printf("%02x", *php);
-            printf("\n");
-        }
-        else
-            printf("Previous hash:\tNULL\n");
-        printf("Own hash:\t0x");
-        uint8_t * ownHashUpperBound = blockPointer->ownHash + SHA256_BLOCK_SIZE;
-        for (uint8_t * ohp = blockPointer->ownHash; ohp < ownHashUpperBound; ohp++)
-            printf("%02x", *ohp);
-        printf("\n");       
+        block_print(*blockPointer);      
     }    
 }
 
@@ -97,7 +67,7 @@ void blockchain_free(block_chain_t blockChain)
     }
 }
 
-static block_t blockchain_get_last_block(block_chain_t blockChain)
+static inline block_t blockchain_get_last_block(block_chain_t blockChain)
 {
     return *(blockChain.blocks + blockChain.usedBlocks - 1);
 }

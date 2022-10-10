@@ -40,11 +40,11 @@ TEST(SHA256, abc)
                                             0x15,
                                             0xad
                                         };
-    uint8_t text[] = {"abc"};
+    char const * text = "abc";
     uint8_t buf[SHA256_BLOCK_SIZE];
     sha256_context_t ctx;
     sha256_init(&ctx);
-	sha256_update(&ctx, text, strlen((char *)text));
+	sha256_update(&ctx, (uint8_t *)text, strlen(text));
 	sha256_final(&ctx, buf);
     for (size_t i = 0; i < SHA256_BLOCK_SIZE; i++)
         ASSERT_EQ(*(buf + i), *(expectedHash + i));
@@ -86,11 +86,11 @@ TEST(SHA256, enigma)
                                             0x68, 
                                             0x7c
                                         };
-    uint8_t text[] = {"enigma"};
+    char const * text = "enigma";
     uint8_t buf[SHA256_BLOCK_SIZE];
     sha256_context_t ctx;
     sha256_init(&ctx);
-	sha256_update(&ctx, text, strlen((char *)text));
+	sha256_update(&ctx, (uint8_t *)text, strlen(text));
 	sha256_final(&ctx, buf);
     for (size_t i = 0; i < SHA256_BLOCK_SIZE; i++)
         ASSERT_EQ(*(buf + i), *(expectedHash + i));

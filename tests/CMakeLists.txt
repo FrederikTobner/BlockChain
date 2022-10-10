@@ -7,7 +7,7 @@ endif()
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(TEST_PROJ_NAME BlockchainTests)
+set(TEST_PROJ_NAME ${PROJECT_NAME}Tests)
 
 include(FetchContent)
 FetchContent_Declare(
